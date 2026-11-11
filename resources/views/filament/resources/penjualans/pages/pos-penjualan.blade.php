@@ -1,0 +1,767 @@
+<x-filament::page>
+    {{-- =========================================================
+        POS CASHIER STYLE (KHUSUS PAGE INI)
+        ========================================================= --}}
+    <style>
+        option {
+            background: #010101;
+            color: #fafafa;
+            
+        }
+        /* ===============================
+           GLOBAL POS LAYOUT
+           =============================== */
+        .pos-wrapper {
+            font-family: ui-sans-serif, system-ui, -apple-system;
+            /* background: #f9fafb; */
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            padding: 16px;
+        }
+
+        .pos-title {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        /* ===============================
+           INPUT & SELECT
+           =============================== */
+        .pos-input,
+        .pos-select {
+            width: 100%;
+            padding: 10px 12px;
+            border-radius: 6px;
+            border: 1px solid #d1d5db;
+            /* background: #fff; */
+            font-size: 14px;
+        }
+
+        .pos-input:focus,
+        .pos-select:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+        }
+
+        /* ===============================
+           SEARCH DROPDOWN
+           =============================== */
+        .pos-search-box {
+            width: 300px;
+            /* background: #fff; */
+            border-radius: 6px;
+            border: 1px solid #d1d5db;
+            overflow: hidden;
+            margin-top: 4px;
+        }
+
+        .pos-search-item {
+            padding: 10px;
+            cursor: pointer;
+            border-bottom: 1px solid #d1d5db;
+        }
+
+
+        .pos-search-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            margin-top: 4px;
+            max-height: 250px;
+            overflow-y: auto;
+            z-index: 50;
+        }
+
+
+        .pos-search-item:hover {
+            border-radius: 8px;
+            outline: none;
+            border: 1px solid #2563eb;
+            /* border-color: #2563eb; */
+            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+        }
+
+
+        /* ===============================
+           DIVIDER
+           =============================== */
+        .pos-divider {
+            border-top: 1px dashed #d1d5db;
+            margin: 24px 0;
+        }
+
+        /* ===============================
+           TABLE (CART)
+           =============================== */
+        .pos-table {
+            width: 100%;
+            border-collapse: collapse;
+            /* background: #fff; */
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .pos-table th {
+            background: #111827;
+            color: #fff;
+            font-weight: 600;
+            padding: 10px;
+            font-size: 13px;
+        }
+
+        .pos-table td {
+            padding: 10px;
+            border-bottom: 1px solid #e5e7eb;
+            font-size: 14px;
+        }
+
+        .pos-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* ===============================
+   QTY BUTTON
+   =============================== */
+        .qty-btn {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 16px;
+            line-height: 1;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s ease;
+        }
+
+        /* ➖ MINUS */
+        .qty-btn.minus {
+            /* background: #fee2e2; merah muda/ */
+            color: #b91c1c;
+        }
+
+        .qty-btn.minus:hover {
+            background: #fecaca;
+        }
+
+        /* ➕ PLUS */
+        .qty-btn.plus {
+            /* background: #dcfce7; hijau muda */
+            color: #166534;
+        }
+
+        .qty-btn.plus:hover {
+            background: #bbf7d0;
+        }
+
+        /* Disabled state (opsional) */
+        .qty-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        /* ===============================
+           BUTTON
+           =============================== */
+        .btn-danger {
+            background: #cf2323;
+            color: white;
+            border: none;
+            padding: 6px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .btn-danger:hover {
+            background: #ef4444;
+        }
+
+        .btn-primary {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .btn-primary:hover {
+            background: #1d4ed8;
+        }
+
+        /* ===============================
+           TOTAL
+           =============================== */
+        .pos-total {
+            font-size: 20px;
+            font-weight: 700;
+            /* color: #111827; */
+        }
+
+        .pos-kembalian {
+            font-size: 16px;
+            font-weight: 600;
+        }
+        /* ===============================
+   INPUT HARGA JUAL (POS)
+   =============================== */
+        .pos-input-price {
+            width: 100px;
+            padding: 6px 8px;
+
+            border: 1px solid #d1d5db; /* abu lembut */
+            border-radius: 6px;
+
+            /* background-color: #f9fafb; beda dari bg tabel */
+            /* color: #111827; */
+
+            font-weight: 600;
+            text-align: right;
+
+            outline: none;
+        }
+
+        /* Fokus / aktif */
+        .pos-input-price:focus {
+            border-color: #2563eb;
+            /* background-color: #ffffff; */
+            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+        }
+
+        /* Mobile: lebih besar & mudah disentuh */
+        @media (max-width: 640px) {
+            .pos-input-price {
+                width: 120px;
+                padding: 10px;
+                font-size: 16px; /* penting: mencegah zoom iOS */
+            }
+        }
+        /* ===============================
+   RESPONSIVE SWITCH
+   =============================== */
+        .pos-cart-mobile {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .pos-table-desktop {
+                display: none;
+            }
+
+            .pos-cart-mobile {
+                display: block;
+            }
+        }
+
+        /* ===============================
+   MOBILE CARD STYLE
+   =============================== */
+        .pos-cart-card {
+            /* background: #ffffff; */
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 12px;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .card-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 6px 0;
+            font-size: 14px;
+        }
+
+        .card-row.total {
+            border-top: 1px dashed #e5e7eb;
+            padding-top: 6px;
+            margin-top: 8px;
+        }
+
+        .qty-control {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .qty-control input {
+            width: 60px;
+            text-align: center;
+        }
+
+        .qty-control button {
+            padding: 6px 10px;
+            font-size: 16px;
+        }
+        .grid-span-full {
+            grid-column: 1 / -1; /* dari kolom 1 sampai terakhir */
+        }
+
+        .bank-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+    </style>
+
+    {{-- =========================================================
+        WRAPPER
+        ========================================================= --}}
+    <div class="pos-wrapper">
+        <div style="display: flex; width: 100%; justify-content: space-between;">
+            <h2 class="pos-title">Point of Sale</h2>
+            <div style="margin-top: 12px; font-size: 14px">
+                <strong>Kasir:</strong> {{ auth()->user()->name }}
+            </div>
+        </div>
+
+        <div class="pos-divider"></div>
+
+        {{-- ===================== CUSTOMER ===================== --}}
+
+        {{-- MEMBER / REGULAR --}}
+        <h6 style="margin-bottom: 8px; font-weight: 700;">
+            Jenis Pelanggan
+        </h6>
+        <select wire:model.live="is_member" class="pos-select">
+            <option value="0">Regular</option>
+            <option value="1">Member</option>
+        </select>
+        <div class="pos-divider"></div>
+        {{-- ===================== TITLE ===================== --}}
+
+        {{-- ===================== SEARCH ===================== --}}
+        <h6 style="margin-bottom: 8px; font-weight: 700;">
+            Masukkan Barang
+        </h6>
+
+        <div class="pos-search-wrapper" style="position: relative; max-width: 300px">
+            <input
+                type="text"
+                wire:model.live.debounce.300ms="search"
+                placeholder="Cari barang / barcode"
+                class="pos-input w-full"
+                wire:focus="openDropdown"
+                wire:keydown.escape="closeDropdown"
+            />
+
+            @if ($showDropdown && $searchResults->isNotEmpty())
+                <div class="pos-search-dropdown">
+                    @foreach ($searchResults as $barang)
+                            <div
+                                x-data
+                                :style="$store.theme !== 'dark' 
+                                ? 'background-color: #fafafa; color: #09090B;' 
+                                : 'background-color: #09090B; color: #fafafa;'"
+                                wire:click="selectBarang({{ $barang->id }})"
+                                class="pos-search-item"
+                            >
+                                <strong>{{ $barang->nama_barang }}</strong><br>
+                                <small>Rp {{ number_format($barang->harga_jual) }}</small><br>
+                                <small>
+                                    Stock:
+                                    {{ $barang->stok_minimum > 0 ? $barang->stok_minimum : 'Kosong' }}
+                                </small>
+                            </div>
+                    @endforeach
+                </div>
+            @endif
+        </div>
+
+
+        <div class="pos-divider"></div>
+
+        <div class="pos-table-desktop">
+            <table class="pos-table">
+                {{-- ===================== CART ===================== --}}
+                <table class="pos-table">
+                    <thead>
+                        <tr>
+                            <th>Qty</th>
+                            <th>Barang</th>
+                            <th>Satuan</th>
+                            <th>Harga</th>
+                            <th>Harga Jual</th>
+                            <th>Potongan</th>
+                            <th>Total Potongan</th>
+                            <th>Subtotal</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse ($cart as $id => $item)
+                        <tr>
+                            <td align="center">
+                                <button
+                                    wire:click="decrementQty({{ $id }})"
+                                    class="qty-btn minus"
+                                >
+                                    −
+                                </button>
+
+                                <input
+                                    type="number"
+                                    min="1"
+                                    class="pos-input"
+                                    style="
+                                        width: 70px;
+                                        text-align: center;
+                                        margin: 0 6px;
+                                        padding: 4px;
+                                    "
+                                    wire:model.lazy="cart.{{ $id }}.qty"
+                                    wire:change="updateQty({{ $id }})"
+                                />
+
+                                <button
+                                    wire:click="incrementQty({{ $id }})"
+                                    class="qty-btn plus"
+                                >
+                                    +
+                                </button>
+                            </td>
+                            <td>{{ $item["nama_barang"] }}</td>
+                            <td align="center">{{ $item["satuan"] }}</td>
+                            <td>
+                                Rp. {{ number_format($item["harga_awal"]) }}
+                            </td>
+
+                            <td class="price-cell">
+                                Rp.
+                                <input
+                                    type="number"
+                                    inputmode="numeric"
+                                    class="pos-input-price"
+                                    wire:model.lazy="cart.{{ $id }}.harga_jual"
+                                    wire:change="updateHargaJual({{ $id }})"
+                                />
+                            </td>
+                            <!-- potongan -->
+                            <!-- POTONGAN PER PCS -->
+                            <td class="price-cell">
+                                Rp.
+                                <input
+                                    type="number"
+                                    min="0"
+                                    inputmode="numeric"
+                                    class="pos-input-price"
+                                    wire:model.lazy="cart.{{ $id }}.potongan"
+                                    wire:change="updatePotongan({{ $id }})"
+                                />
+                            </td>
+                            <!-- TOTAL POTONGAN -->
+                            <td class="price-cell text-red-600 font-semibold">
+                                Rp.
+                                {{
+                                    number_format(
+                                        $cart[$id]["total_potongan"] ?? 0
+                                    )
+                                }}
+                            </td>
+
+                            <td align="right">
+                                Rp. {{ number_format($item["subtotal"]) }}
+                            </td>
+                            <td align="center">
+                                <button
+                                    wire:click="removeFromCart({{ $id }})"
+                                    class="btn-danger"
+                                    {{-- style="background: #b91c1c" --}}
+                                >
+                                    ❌
+                                </button>
+                            </td>
+                        </tr>
+                        @empty
+                        <tr>
+                            <td colspan="6" align="center">Keranjang kosong</td>
+                        </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </table>
+        </div>
+        <div class="pos-cart-mobile">
+            @forelse ($cart as $id => $item)
+            <div class="pos-cart-card">
+                {{-- HEADER --}}
+                <div class="card-header">
+                    <strong>{{ $item["nama_barang"] }}</strong>
+                    <button
+                        wire:click="removeFromCart({{ $id }})"
+                        class="btn-danger"
+                    >
+                        ❌
+                    </button>
+                </div>
+
+                {{-- QTY --}}
+                <div class="card-row">
+                    <span>Qty</span>
+                    <div class="qty-control">
+                        <button wire:click="decrementQty({{ $id }})">−</button>
+                        <input
+                            type="number"
+                            min="1"
+                            wire:model.lazy="cart.{{ $id }}.qty"
+                            wire:change="updateQty({{ $id }})"
+                        />
+                        <button wire:click="incrementQty({{ $id }})">+</button>
+                    </div>
+                </div>
+
+                {{-- HARGA AWAL --}}
+                <div class="card-row">
+                    <span>Harga</span>
+                    <span>Rp {{ number_format($item["harga_awal"]) }}</span>
+                </div>
+
+                {{-- HARGA JUAL --}}
+                <div class="card-row">
+                    <span>Harga Jual</span>
+                    <input
+                        type="number"
+                        inputmode="numeric"
+                        class="pos-input-price"
+                        wire:model.lazy="cart.{{ $id }}.harga_jual"
+                        wire:change="updateHargaJual({{ $id }})"
+                    />
+                </div>
+
+                {{-- POTONGAN PER PCS --}}
+                <div class="card-row">
+                    <span>Potongan / pcs</span>
+                    <input
+                        type="number"
+                        min="0"
+                        inputmode="numeric"
+                        class="pos-input-price"
+                        wire:model.lazy="cart.{{ $id }}.potongan"
+                        wire:change="updatePotongan({{ $id }})"
+                    />
+                </div>
+
+                {{-- TOTAL POTONGAN --}}
+                <div class="card-row text-red-600">
+                    <span>Total Potongan</span>
+                    <strong>
+                        Rp {{ number_format($item["total_potongan"] ?? 0) }}
+                    </strong>
+                </div>
+
+                {{-- SUBTOTAL --}}
+                <div class="card-row total">
+                    <span>Subtotal</span>
+                    <strong>Rp {{ number_format($item["subtotal"]) }}</strong>
+                </div>
+            </div>
+            @empty
+            <div class="empty-cart">Keranjang kosong</div>
+            @endforelse
+        </div>
+
+        <div class="pos-divider"></div>
+        {{-- SEARCH CUSTOMER (MEMBER ONLY) --}}
+        @if ($is_member === 1)
+        <h6 style="margin-bottom: 8px; font-weight: 700;">
+            Temukan Member
+        </h6>
+
+        <input
+            wire:model.live="searchCustomer"
+            class="pos-input"
+            placeholder="Cari pelanggan (nama / NIK / telepon)"
+        />
+
+        <div class="pos-divider"></div>
+
+        @if (!empty($customerResults))
+        <div class="pos-search-box">
+            @foreach ($customerResults as $cust)
+            <div
+                class="pos-search-item"
+                wire:click="selectCustomer({{ $cust->id }})"
+            >
+                <strong>{{ $cust->nama }}</strong
+                ><br />
+                <small>
+                    {{ $cust->telepon }} • ----{{ substr($cust->nik, -4) }}
+                </small>
+            </div>
+            @endforeach
+        </div>
+        @endif @endif
+        {{-- ===================== DATA PELANGGAN ===================== --}}
+        <h6 style="margin-bottom: 8px; font-weight: 700;">
+            Data Pelanggan
+        </h6>
+
+        <div
+            style="
+                display: grid;
+                grid-template-columns: 1fr 2fr 1fr;
+                gap: 8px;
+                max-width: 600px;
+            "
+        >
+            <input
+                wire:model.live="nama_customer"
+                class="pos-input"
+                placeholder="Nama customer"
+            />
+
+            <input
+                wire:model.live="alamat"
+                class="pos-input"
+                placeholder="Alamat"
+            />
+
+            <select wire:model.live="metode_pembayaran" class="pos-select">
+                <option value="TUNAI">TUNAI</option>
+                <option value="TRANSFER">TRANSFER</option>
+            </select>
+
+            {{-- TRANSFER ONLY --}}
+            @if ($metode_pembayaran === 'TRANSFER')
+            <div class="grid-span-full">
+                <select
+                    wire:model.live="rekening_perusahaan_id"
+                    class="pos-select"
+                >
+                    <option value="">Pilih Rekening Perusahaan</option>
+
+                    @foreach ($rekeningPerusahaan as $rek)
+                    <option value="{{ $rek->id }}">
+                        {{ $rek->nama_bank }}
+                        • {{ substr($rek->no_rekening, -4) }} •
+                        {{ $rek->atas_nama }}
+                    </option>
+                    @endforeach
+                </select>
+            </div>
+            @endif
+        </div>
+
+        {{-- ===================== Pengiriman ===================== --}}
+
+        <div class="pos-divider"></div>
+        <h6 style="margin-bottom: 8px; font-weight: 700;">
+            Metode Pengiriman
+        </h6>
+
+        {{-- METODE PENGIRIMAN --}}
+        <select
+            wire:model.live="metode_pengiriman"
+            class="pos-select"
+            style="max-width: 300px; margin-bottom: 12px"
+        >
+            <option value="DIBAWA_SENDIRI">Dibawa Sendiri</option>
+            <option value="DIKIRIM">Dikirim oleh Kami</option>
+        </select>
+
+        {{-- DETAIL PENGIRIMAN --}}
+        @if ($metode_pengiriman === 'DIKIRIM')
+        <div
+            style="
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 8px;
+                max-width: 600px;
+            "
+        >
+            <input
+                wire:model.live="kendaraan"
+                class="pos-input"
+                placeholder="Kendaraan"
+            />
+
+            <input
+                wire:model.live="plat_kendaraan"
+                class="pos-input"
+                placeholder="Plat Kendaraan"
+            />
+
+            <input
+                wire:model.live="nama_sopir"
+                class="pos-input"
+                placeholder="Nama Sopir"
+            />
+        </div>
+        @endif
+
+        {{-- ===================== TOTAL ===================== --}}
+        <div class="pos-divider"></div>
+        <h3 class="pos-total">Total Pembayaran: Rp {{ number_format($this->total) }}</h3>
+        
+        <h6 style="margin-bottom: 8px; font-weight: 400;">
+            Nominal yang disetorkan
+        </h6>
+
+<div style="max-width: 300px; margin-top: 8px">
+    <input
+        type="number"
+        wire:model.lazy="bayar"
+        class="pos-input"
+        inputmode="numeric"
+        placeholder="Bayar"
+        min="0"
+    />
+
+    @php
+        $bayar = (int) ($this->bayar ?? 0);
+        $total = (int) ($this->total ?? 0);
+        $selisih = $bayar - $total;
+
+        $color = $selisih < 0 ? 'color:red;' : '';
+    @endphp
+
+    <p
+        class="pos-kembalian"
+        style="{{ $color }} margin-top:4px; margin-bottom:4px;"
+    >
+        {{ $selisih < 0 ? 'Kurang' : 'Kembalian' }}:
+        Rp {{ number_format(abs($selisih)) }}
+    </p>
+</div>
+
+        <button wire:click="simpanPenjualan" style="margin-top: 6px;" class="btn-primary">
+            Simpan Penjualan
+        </button>
+    </div>
+
+    {{-- =========================================================
+        OFFLINE SAFE (LOCAL STORAGE)
+        ========================================================= --}}
+    <script>
+        document.addEventListener('livewire:update', () => {
+            localStorage.setItem(
+                'pos_cart',
+                JSON.stringify(@json($cart))
+            );
+        });
+
+        window.addEventListener('load', () => {
+            const cart = localStorage.getItem('pos_cart');
+            if (cart) {
+                Livewire.dispatch('restoreCart', {
+                    cart: JSON.parse(cart)
+                });
+            }
+        });
+    </script>
+</x-filament::page>
